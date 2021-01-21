@@ -1,0 +1,35 @@
+\begin{thebibliography}{1}
+
+\bibitem{optimal_control_blue}
+М.М.Потапов~А.В.Разгулин Ф.П.~Васильев, М.А.~Куржанский.
+\newblock Приближенное решение двойственных задач управления и наблюдения.
+\newblock 2010.
+
+\bibitem{optimal_control_1ex}
+Знаменская Л.Н.
+\newblock Управление колебаниями струны в классе обобщённых решений из l2.
+\newblock {\em Дифференциальные уравнения}, 38:666--672, 2008.
+
+\bibitem{optimal_control_2ex}
+Ильин В.А.
+\newblock Граничное управление процессом колебаний струны на одном конце при
+  закрепленном втором конце и при условии существования конечной энергии.
+\newblock {\em Докл.}, 378:743--747, 2001.
+
+\bibitem{optimal_control_3ex}
+Потапов М.М.
+\newblock О сильной сходимости разностных аппроксимаций для задач граничного
+  управления и наблюдения для волнового уравнения.
+\newblock {\em ЖВ МиМФ}, 38:387--397, 1998.
+
+\bibitem{optimal_control_multy_ex}
+Mehdi Rezai~Bahrmand Hassan~Zarei.
+\newblock Multiobjective optimal control of the linear wave equation.
+\newblock {\em Ain Shams Engineering Journal}, 5:1299--1305, 2014.
+
+\bibitem{decision_theory}
+В.~Д. Ногин.
+\newblock {\em Принятие решений в многокритериальной среде}.
+\newblock Физматлит, Москва, 2002.
+
+\end{thebibliography}

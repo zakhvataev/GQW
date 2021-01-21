@@ -1,0 +1,295 @@
+% !TeX encoding = windows-1251
+\documentclass[a4paper]{article}
+\usepackage{blindtext}
+\usepackage[T1]{fontenc}
+\usepackage[OT1]{fontenc}
+\usepackage[T2A]{fontenc}
+\usepackage[cp1251]{inputenc}  % подходящая для меня кодировака !!!!
+\usepackage[english ,russian]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage[14pt]{extsizes}
+\usepackage{setspace,amsmath}
+\usepackage{graphicx}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=15mm, nohead, footskip=10mm]{geometry} %
+\graphicspath{{./}}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\begin{document}
+	
+\begin{center}
+	\includegraphics{logo}
+	\hfill \\
+	\large{	Московский государственный университет\\ имени М. В. Ломоносова}\\
+	\normalsize{Факультет Вычислительной Математики и Кибернетики}\\
+	\normalsize{Кафедра оптимального управления}\\
+	\hfill \newline
+	\hfill \newline
+	\Large{\bf Курсовая Работа}\\
+	\hfill \newline
+	\LARGE{\bf{	Оптимизация по Парето управляемого процесса колебаний}}\\
+	\hfill \newline
+	\large{\bf Выполнил студент 313 гр. \\ Захватаев Михаил Дмитриевич}\\
+	\hfill \newline
+	\hfill \newline
+	\hfill \newline
+	\hfill \newline
+	\hfill \newline
+	\hfill \newline
+	\hfill \newline
+\end{center}
+	\begin{flushright}
+		\normalsize{
+				\bf{Научный руководитель:\\
+					д.ф.-м.н., профессор\\
+					М. М. Потапов}\\}
+	\end{flushright}
+
+	\hfill \newline
+\begin{center} Москва 2020 \end{center}
+\thispagestyle{empty}
+
+
+\newpage
+\tableofcontents % Содержание
+\newpage	
+\begin{large}
+\section{Введение}
+	\quad Задачи управления для волнового уравнения рассматривали авторы учебника \cite{optimal_control_blue}, авторы научных статей: \cite{optimal_control_1ex,optimal_control_2ex,optimal_control_3ex}. Насчёт задач векторной (многокритериальной) оптимизации работ меньше. Её, например, рассматривали авторы научной статьи \cite{optimal_control_multy_ex}\\
+
+\section{Постановка задачи}
+
+		\subsection{Исходная краевая задача}
+		\quad Сформулируем задачу, которая описывает колебательный процесс струны длины $l$ с управлением силой на левом конце, заставляющим колебаться струну, и свободным правым концом.
+		Тогда фазовая траектория (смещение струны от положения равновесия) $y = y(t, x; u) $, соответствующее управлению $u = u(t)$, является решением данной задачи:
+		\begin{equation}
+			\begin{cases}
+				y_{tt} = y_{xx},\quad (t,x) \in Q = (0, T) \times (0, l),\\
+				-y_x|_{x=0} = u(t),\quad y_x|_{x=l}=0,\quad t \in (0, T),\\
+				y|_{t=0}=0,\quad y_t|_{t=0}=0,\quad x \in (0, l).\\
+			\end{cases}
+		\end{equation}	
+		Значения $T>0$ и $l>0$ считаются известными. Граничные управления $u = u(t)$ выбираются из гильбертова пространства $H = L^2(0,T)$.\\
+		\newline
+		
+		\subsection{Цели}
+			\quad Введем 4 функционала:
+			\begin{align*}
+				&J_1(u) = \int\limits_0^l|y(T;x;u)-f_1(x)|^2dx \rightarrow \inf 	&&&(2.1)\\
+				&J_2(u) = \int\limits_0^l|y_t(T;x;u)-f_2(x)|^2dx \rightarrow \inf	&&&(2.2)\\
+				&J_3(u) = \int\limits_0^T|y(T;l;u)-g(t)|^2dt \rightarrow \inf		&&&(2.3)\\
+				&J_4(u) = \int\limits_0^T u^2(t)dt \rightarrow \inf					&&&(2.4)\\
+			\end{align*}
+			{\bf Смысл минимизации:}\\
+			$(2.1)$\indent Задача минимизации функционала $J_1(u)$ отражает наше желание приблизить финальное состояние системы (1) к заданному профилю $f_1(x)$\newline
+			$(2.2)$\indent  Задача минимизации функционала $J_2(u)$ отражает наше желание приблизить финальную скорость системы (1) к заданному профилю $f_2(x)$\newline
+			$(2.3)$\indent Задача минимизации функционала $J_3(u)$ отражает наше желание приблизить движение правого конца системы (1) к заданной траектории $g(t)$\newline
+			$(2.4)$\indent Задача минимизации функционала $J_4(u)$ отражает наше желание свести затраты энергии системы (1) к минимуму\newline
+			\newpage
+	\subsection{Теория}
+				\quad Наша цель - минимизировать векторный критерий: 
+				$$J(u) = (J_1(u), J_2(u), J_3(u), J_4(u))$$
+				
+				Когда имеется один критерий оптимальности, стремление ЛПР\\ (лицо, принимающее решение) обычно
+				проявляется в том, чтобы получить наибольшее, либо наименьшее значение
+				этого критерия. Например, при решении различного рода экономических
+				задач такой показатель, как затраты обычно стремятся минимизировать, а
+				доход – максимизировать.\\
+				
+				Если задан не один, а сразу несколько критериев оптимальности, то для
+				определенности для каждого из них необходимо указать «направление заинтересованности» ЛПР. По этой причине далее рассмотрение ограничивается
+				случаем, когда ЛПР стремится к получению по возможности больших значений всех компонент векторного критерия $J(u)$.\\
+				
+				\quad Далее мы воспользуемся теорией из учебника \cite{decision_theory} "Принятие решений при многих критериях"\\
+				
+				{\bf Определение} Альтернатива (точка) $u_0 \in U$ называется оптимальной по Парето, если не существует такой альтернативы $u \in U$, что $J_i(u)\leq J_i(u_0), i = 1, ... ,n $, и хотя бы одно неравенство выполнено как строгое, т.е. $J(u) \neq J(u_0)$. Все парето-оптимальные решения образуют множество Парето $P_J(u)$.\\
+				\newpage
+\section{Метод решения}
+			\subsection{Свёртка векторного критерия}
+				\quad Для нахождения парето-оптимальных точек в задачах многокритериальной оптимизации обычно используют свертку векторного критерия.
+				$$J(u) = (J_1(u),J_2(u),J_3(u),J_4(u)) \rightarrow p\,-\min \eqno(3.1)$$
+				Будем использовать достаточно популярную линейную свёртку:\\  
+				$$J(u) = \lambda_1J_1(u)+\lambda_2J_2(u)+\lambda_3J_3(u)+\lambda_4J_4(u) \eqno(3.2)$$
+				Числовые коэффициенты $\lambda_i$ в выражении (3.2) называют весами или весовыми коэффициентами, а само выражение - линейной свёрткой критериев $J_i(u)$.\\ Весовые коэффициенты $\lambda_i$ должны быть \textit{положительными} при всех $i = 1, 2, 3, 4$ и удовлетворять соотношению:
+				$$\lambda_1 + \lambda_2 +\lambda_3 + \lambda_4 = 1$$ 
+				Данная свёртка обеспечивает нормированность обобщённого критерия. Суть этой операции состоит в том, чтобы избавиться от различий в размерности, которая может иметь место у отдельных частных критериев, а также - в приведении множеств их возможных значений к одному и тому же фиксированному отрезку $[0, 1]$
+				\\Минимизируя свёртку $J(\lambda, u)$ при фиксированных $\lambda_i$ можно получать парето-оптимальные альтернативы (точки).
+
+  		\newpage
+  		\subsection{Метод градиентного спуска}
+  			\subsubsection{Описание}
+  			Данный метод позволяет нам найти локальный экстремум(в нашем случае минимум) функционала $J(u)$ с помощью движения вдоль градиента.
+  			Основная идея заключается в том, чтобы идти в направлении наискорейшего спуска. Это направление задаётся антиградиентом $- \nabla J$
+  			$$u_{k+1} = u_k - \alpha_k \nabla J(u_k) \eqno(3.2.1)$$
+  			где $\alpha_k$ - задаёт скорость градиентного спуска. $\alpha_k$ может быть выбрана:
+  			\begin{itemize}
+  				\item постоянной (в этом случае метод может расходиться);
+  				\item убывающей в процессе градиентного спуска;
+  				\item гарантирующей наискорейший спуск для поиска минимума $J(u)$:\\
+  				$\alpha_k = argmin_{\alpha} J(u_{k+1}) = argmin_{\alpha} J(u_k - \alpha \nabla J(u_k))$
+  			\end{itemize}
+			\subsubsection{Алгоритм}
+			\begin{itemize}
+				\item[1.] Пусть задано некоторое начальное приближение $u_0$ и необходимая точность рассчёта $\varepsilon$
+				\item[2.] На каждом шаге рассчитываем $u_{k+1}$ по уже известной формуле (3.2.1), выбирая $\alpha_k$, гарантирующую наискорейший спуск.
+				\item[3.] Выбираем и проверяем одно из условий остановки:\\
+				 $|u_{k+1} - u_k| > \varepsilon,\quad |J(u_{k+1})-J(u_k)| > \varepsilon\quad \text{или}\quad \|\nabla J(u_{k+1})\|> \varepsilon$
+				\begin{itemize}
+					\item Если одно из условий выполненно, то переходим к следующему шагу: $k = k + 1$ и возвращаемся ко 2му шагу.
+					\item Иначе найдено $u = u_{k+1}$
+				\end{itemize}
+			\end{itemize}
+		
+		\newpage
+		\section{Аналитические рассчёты}
+		\subsection{Нахождение производных}
+		Для применения метода градиентного спуска нам необходимо найти найти производные частных критериев $J^{\prime}_i$.\\
+		Продемонстрируем рассчёт для нахождения $J^\prime_3(u)$.
+		\begin{itemize}
+		\item Запишем искомое решение в операторном виде:
+		$$
+		A_3u=y(t,l,u),\;\text{где } A_3 : H = L^2(0,T)\rightarrow L^2(0,T) = F  
+		$$
+		\item Функционалы $J_1, J_2, J_3$ квадратичные, вида:
+		$J_i = \|A_iu - f_i\|^2_F$, где $A_i \in L(H\rightarrow F)$
+		$$
+		J_3(u)=\|A_3u-g\|_{L^2(0,T)}^2
+		$$
+		\item Введём сопряжённый к $A$ оператор $A^*$.
+		$$
+		J_3^\prime(u) = 2A_3^*(A_3u-g),\quad A^*_3 : F \rightarrow H
+		$$
+		Для$\;\forall v \in L^2(0,T)\quad \text{справедливо} \quad \langle A_3u,v\rangle=\langle u,A_3^*v\rangle$ 
+		$$
+		\underbrace{\int\limits_{0}^{T}y(t,l,u)v(t)dt}_{\bf+0} = \int\limits_0^Tu(t)\fbox{?}\,dt
+		$$
+		\item Домножим 1е уравнение системы (1) на некоторую функцию\\ $\psi = \psi(t,x) \in C^2(\overline{Q})$ и проинтегрируем по прямоугольнику\\
+		Для $\forall \psi \in \overline{Q}$ верно: $\iint\limits_Q\underbrace{(y_{xx}-y_{tt})}_{\bf=0}\psi\,dt\,dx = 0$\\
+		${\bf1).}\;\iint\limits_Qy_{xx}\psi = \int\limits_0^Ty_x\psi\Big|_{x=0}^{x=l}\,dt - \iint\limits_Qy_x\psi_x =\\
+		\text{}\qquad\qquad=\int\limits_0^Tu(t)\psi(t,0)\,dt-\int\limits_0^Ty\psi_x\Big|_{x=0}^{x=l}\,dt + \iint\limits_Qy\psi_{xx}=\\
+		\text{}\qquad\qquad\qquad\qquad=\int\limits_0^Tu(t)\underbrace{\psi(t,0)}_{\bf=0}\,dt-\int\limits_0^Ty(t,l)\underbrace{\psi_x(t,l)}_{\bf=0}\,dt + \iint\limits_Qy\psi_{xx}$\\
+		${\bf2).}\;-\iint\limits_Qy\psi_{tt} = \int\limits_0^ly_t\psi\Big|_{t=0}^{t=T}\,dx + \iint\limits_Qy_t\psi_t = \\
+		\text{}\qquad\qquad-\int\limits_0^ly_t(T,x)\psi(T,x)\,dx + \int\limits_0^ly\psi_t\Big|_{t=0}^{t=T}\,dx-\iint\limits_Qy\psi_{tt}
+		=\\ \text{}\qquad\qquad\qquad\qquad-\int\limits_0^ly_t(T,x)\underbrace{\psi(T,x)}_{\bf=0}\,dx + \int\limits_0^ly\underbrace{\psi_t(T,x)}_{\bf=0}\,dx-\iint\limits_Qy\psi_{tt}$
+		
+		\item Тогда из $1).$ и $2).$ получаем задачу $(4.3)$ для $\psi$.\\
+		Таким образом, если от $\psi$ потребовать $(4.3)$, то $A_3^*v=\psi(t,0)$.\\
+		И получаем:\
+		$$\boxed{J_3^\prime(u) = 2\psi(t,0)}$$
+		\item Проделав аналогичные действия для $(2.1)$ и $(2.3)$, получим краевые задачи и производные для соответствующих функционалов:\\
+	\end{itemize}
+
+
+	\noindent	
+	$$
+		\begin{cases}
+		\psi_{tt} = \psi_{xx} \quad \text{в}\quad Q = [0; l]\times[0; T],\\
+		\psi_x|_{x=0}=0,\quad\psi_x|_{x=l}=0,\quad 0<t<T, \\
+		\psi|_{t=T}=0,\quad\psi_t|_{t=T}=-v(x),\quad 0<x<l
+		\end{cases} \eqno{(4.1)}
+	$$
+	$$
+		\underline{J_1^\prime=2\psi(t,0)}
+	$$
+	$$
+		\begin{cases}
+		\psi_{tt} = \psi_{xx}  \quad \text{в}\quad Q = [0; l]\times[0; T],\\
+		\psi_x|_{x=0}=0,\quad\psi_x|_{x=l}=0,\quad 0<t<T,\\
+		\psi|_{t=T}=v(x),\quad\psi_t|_{t=T}=0,\quad0<x<l
+		\end{cases}\eqno{(4.2)}
+	$$
+	$$
+		\underline{J_2^\prime(u) = 2\psi(t,0)}
+	$$\
+	$$
+	\begin{cases}
+	\psi_{tt} = \psi_{xx}  \quad \text{в}\quad Q = [0; l]\times[0; T],\\
+	\psi_x|_{x=0}=0,\quad\psi_x|_{x=l}=v(t),\quad 0<t<T,\\
+	\psi|_{t=T}=0,\quad\psi_t|_{t=T}=0,\quad 0<x<l
+	\end{cases}\eqno{(4.3)}
+	$$
+	$$
+	\underline{J_3^\prime(u) = 2\psi(t,0)}
+	$$
+	$$
+	\underline{
+		J_4^\prime(u) = 2u
+	}\eqno{(4.4)}
+	$$
+	Тогда можем записать градиент в виде $\nabla J(u) = \sum^4_{i=1}\lambda_i J^{\prime}_i(u)$
+	\newpage
+	
+	\subsection{Разностная схема}
+		Дискретизацию систему $(1)$ выполним при помощи разностной схемы "крест":
+
+		\begin{equation*}
+		\begin{cases}
+			\frac{y^{n+1}_i - 2y^{n}_i + y^{n-1}_i}{\tau^2} = \frac{y^{n}_{i+1} - 2y^{n}_{i-1} + y^{n}_{i-1}}{h^2},\quad i = \overline{1,N-1},\quad n = \overline{2,M}\\
+			\frac{y^n_1-y^n_0}{h} = -u(t),\quad y^n_l = 0,\quad n=\overline{0,M} 
+		\end{cases}\eqno(4.2)
+		\end{equation*}	
+		Значение сеточной функции на верхнем слое $n+1$ рассчитывается по 3м значением слоя $n$ и по одному значению слоя $n - 1$
+		$$y^{n+1}_i=2y^n_i-y^{n-1}_i+(\frac{\tau}{h})^2(y^n_{i-1}-2y^n_i+y^n_{i+1})$$ 
+		Схема устойчива при $\frac{\tau}{h}\leq 1$
+	
+	\newpage
+	
+	\section{Метод SR1}
+		\subsection{Идея}
+			Рассмотрим задачу гладкой безусловной оптимизации:
+			
+			\begin{equation*}
+				\min\limits_{x\in\mathbb{R}}f(x),
+			\end{equation*}
+		
+			где $f : \mathbb{R}^n \rightarrow \mathbb{R}$ - дважды непрерывно дифференциремая функция.\\
+			
+			На каждом итерационном шаге необходимо вычислить:  
+			
+			1). Новую точку: $x_{k+1} = x_k - \alpha H_k\nabla f(x_k)$ 
+			
+			
+			2). Обновление матрицы $H_k \rightarrow H_{k+1}$\\
+			
+			Идея Квазиньютоновских методов состоит в том, чтобы не считать Гессиан на каждом шаге, (т.к. эта операция затратна) а искать его аппроксимацию:  
+			
+			$$\lim\limits_{k\rightarrow\infty} H_k \rightarrow H$$
+			
+			
+			Применяя Квазиньютоновский метод SR1 будем приближать обратный Гессиан $H^{-1}$, при помощи симметричной коррекции ранга 1:\\
+			
+			
+			$$H_{k+1} = H_k + \frac{(s_k-H_ky_k)(s_k-H_ky_k)^T}{\langle s_k-H_ky_k,y_k\rangle}$$\\
+			
+			где	
+			$s_k = x_{k+1} - x_k$  
+			$y_k = \nabla f(x_{k+1}) - \nabla f(x_k)$
+	\newpage
+	\subsection{Программная реализация}
+		//TODO
+	\subsection{Тестовые функции для метода SR1}
+		Параметры метода:\\
+		$\text{1). Начальное приближение: произвольный вектор }  x \in \mathbb{R}^{100}$\\
+		$\text{2). Шаг: } \alpha = 0.1$\\
+		$\text{3). Условие остановки: } ||\nabla f(x)||_2^2 < \varepsilon = 10^{-4}$
+		\subsubsection{Тестовая функция 1}
+			\quad$f = \sum_{i=0}^{n-1}(x^2)$,
+			где $f : \mathbb{R}^n \rightarrow \mathbb{R}$\\
+			Время: 1.54 сек.
+			
+		\subsubsection{Тестовая функция 2}
+			\quad$f = \sum_{i=0}^{n-1}(x^2)$,
+			где $f : \mathbb{R}^n \rightarrow \mathbb{R}$\\
+			Время: 56.6 сек
+		\subsubsection{Тестовая функция 3}
+			\quad$f = \sum_{i=0}^{n-1}(x^2)$,
+			где $f : \mathbb{R}^n \rightarrow \mathbb{R}$\\
+			Время: 2мин20сек
+	\newpage
+\end{large}
+
+\bibliographystyle{unsrt}
+\bibliography{authors}
+
+\end{document}
